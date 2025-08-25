@@ -1,0 +1,142 @@
+.note-connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.connection-group {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.connection-line {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: connectionAppear 0.5s ease-out;
+}
+
+.connection-glow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: glowAppear 0.5s ease-out;
+}
+
+.connection-start,
+.connection-end {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: connectionPointAppear 0.5s ease-out;
+}
+
+/* Animations */
+@keyframes connectionAppear {
+  from {
+    stroke-dasharray: 0 1000;
+    opacity: 0;
+  }
+  to {
+    stroke-dasharray: 1000 0;
+    opacity: 1;
+  }
+}
+
+@keyframes glowAppear {
+  from {
+    opacity: 0;
+    stroke-width: 0;
+  }
+  to {
+    opacity: 0.3;
+    stroke-width: 8;
+  }
+}
+
+@keyframes connectionPointAppear {
+  from {
+    r: 0;
+    opacity: 0;
+  }
+  to {
+    r: 4;
+    opacity: 1;
+  }
+}
+
+/* Hover effects */
+.connection-line:hover {
+  stroke-width: 4;
+  filter: drop-shadow(0 0 4px rgba(0, 123, 255, 0.5));
+}
+
+.connection-glow:hover {
+  opacity: 0.5;
+  stroke-width: 10;
+}
+
+/* Different connection types */
+.connection-group[data-type="related"] .connection-line {
+  stroke: #007bff;
+}
+
+.connection-group[data-type="related"] .connection-glow {
+  stroke: #007bff;
+}
+
+.connection-group[data-type="depends"] .connection-line {
+  stroke: #dc3545;
+}
+
+.connection-group[data-type="depends"] .connection-glow {
+  stroke: #dc3545;
+}
+
+.connection-group[data-type="includes"] .connection-line {
+  stroke: #28a745;
+}
+
+.connection-group[data-type="includes"] .connection-glow {
+  stroke: #28a745;
+}
+
+/* Elastic animation for moving connections */
+.connection-group.moving {
+  transition: all 0.1s ease-out;
+}
+
+.connection-group.moving .connection-line {
+  stroke-dasharray: 5,5;
+  animation: elasticMove 0.1s ease-out;
+}
+
+@keyframes elasticMove {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: 10;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .connection-line {
+    stroke-width: 2;
+  }
+  
+  .connection-glow {
+    stroke-width: 6;
+  }
+  
+  .connection-start,
+  .connection-end {
+    r: 3;
+  }
+}

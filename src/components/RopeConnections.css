@@ -1,0 +1,271 @@
+.rope-connections {
+  pointer-events: none;
+  /* Remove transition to prevent lag during animations */
+  will-change: transform;
+  transform: translateZ(0); /* GPU acceleration */
+}
+
+.rope-connections.dragging {
+  pointer-events: none;
+}
+
+.rope-group {
+  /* Remove transition to prevent lag during physics updates */
+  will-change: transform;
+  transform: translateZ(0); /* GPU acceleration */
+}
+
+.rope-group.rope-hovered {
+  transform: scale(1.02) translateZ(0);
+}
+
+.rope-click-area {
+  pointer-events: auto;
+  cursor: pointer;
+  /* Remove transition for immediate response */
+}
+
+.rope-click-area:hover {
+  stroke-width: 25;
+}
+
+.rope-main {
+  /* Remove transition to prevent lag during physics updates */
+  will-change: stroke-width, opacity;
+}
+
+.rope-group.rope-hovered .rope-main {
+  stroke-width: 8;
+  filter: url(#ropeHover);
+}
+
+.rope-shadow {
+  /* Remove transition to prevent lag */
+  will-change: stroke-width;
+}
+
+.rope-texture {
+  /* Remove transition to prevent lag */
+  will-change: stroke-width;
+}
+
+.rope-highlight {
+  /* Remove transition to prevent lag */
+  will-change: stroke-width;
+}
+
+.rope-anchor {
+  /* Remove transition to prevent lag */
+  will-change: r, stroke-width;
+}
+
+.rope-group.rope-hovered .rope-anchor {
+  r: 8;
+  stroke-width: 3;
+}
+
+.rope-knot {
+  /* Remove transition to prevent lag */
+  will-change: r;
+}
+
+.rope-group.rope-hovered .rope-knot {
+  r: 4;
+}
+
+.tension-indicator {
+  /* Remove transition to prevent lag */
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.delete-indicator {
+  animation: deletePulse 1s ease-in-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes deletePulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) translateZ(0);
+  }
+}
+
+/* Rope animation speeds - optimized for performance */
+.rope-fast .rope-main,
+.rope-fast .rope-shadow,
+.rope-fast .rope-texture,
+.rope-fast .rope-highlight {
+  /* Remove animation-duration to prevent conflicts with physics */
+}
+
+.rope-normal .rope-main,
+.rope-normal .rope-shadow,
+.rope-normal .rope-texture,
+.rope-normal .rope-highlight {
+  /* Remove animation-duration to prevent conflicts with physics */
+}
+
+.rope-slow .rope-main,
+.rope-slow .rope-shadow,
+.rope-slow .rope-texture,
+.rope-slow .rope-highlight {
+  /* Remove animation-duration to prevent conflicts with physics */
+}
+
+/* Rope thickness variations */
+.rope-thin .rope-main {
+  stroke-width: 3;
+}
+
+.rope-thin .rope-shadow {
+  stroke-width: 5;
+}
+
+.rope-thin .rope-texture {
+  stroke-width: 2;
+}
+
+.rope-thin .rope-highlight {
+  stroke-width: 1;
+}
+
+.rope-medium .rope-main {
+  stroke-width: 6;
+}
+
+.rope-medium .rope-shadow {
+  stroke-width: 8;
+}
+
+.rope-medium .rope-texture {
+  stroke-width: 4;
+}
+
+.rope-medium .rope-highlight {
+  stroke-width: 2;
+}
+
+.rope-thick .rope-main {
+  stroke-width: 9;
+}
+
+.rope-thick .rope-shadow {
+  stroke-width: 12;
+}
+
+.rope-thick .rope-texture {
+  stroke-width: 6;
+}
+
+.rope-thick .rope-highlight {
+  stroke-width: 3;
+}
+
+/* Rope stretch animation during dragging - optimized */
+.rope-stretched .rope-main {
+  /* Remove animation to prevent conflicts with physics */
+  stroke-width: 5;
+}
+
+.rope-relaxed .rope-main {
+  /* Remove animation to prevent conflicts with physics */
+  stroke-width: 6;
+}
+
+/* Hover effects for better UX - immediate response */
+.rope-group:hover .rope-main {
+  stroke-width: 7;
+}
+
+.rope-group:hover .rope-anchor {
+  r: 7;
+}
+
+.rope-group:hover .rope-knot {
+  r: 3.5;
+}
+
+/* Performance optimizations - GPU acceleration for all elements */
+.rope-main,
+.rope-shadow,
+.rope-texture,
+.rope-highlight,
+.rope-anchor,
+.rope-knot {
+  /* Remove transitions to prevent lag during physics updates */
+  will-change: transform, stroke-width, r, opacity;
+  transform: translateZ(0); /* GPU acceleration */
+}
+
+/* Additional performance optimizations */
+.rope-connections {
+  /* Ensure GPU acceleration */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.rope-group {
+  /* Ensure GPU acceleration */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Responsive design with performance optimizations */
+@media (max-width: 768px) {
+  .rope-click-area {
+    stroke-width: 25;
+  }
+  
+  .rope-main {
+    stroke-width: 5;
+  }
+  
+  .rope-shadow {
+    stroke-width: 7;
+  }
+  
+  .rope-texture {
+    stroke-width: 3;
+  }
+  
+  .rope-highlight {
+    stroke-width: 1.5;
+  }
+  
+  .rope-anchor {
+    r: 5;
+  }
+  
+  .rope-knot {
+    r: 2.5;
+  }
+}
+
+/* High-performance mode for many connections */
+.rope-connections.performance-mode .rope-texture,
+.rope-connections.performance-mode .rope-shadow {
+  display: none;
+}
+
+.rope-connections.performance-mode .rope-main {
+  stroke-width: 4;
+}
+
+/* Smooth rope physics visualization */
+.rope-physics-active {
+  /* Enable smooth physics updates */
+  transform: translateZ(0);
+}
+
+/* Optimize for touch devices */
+@media (pointer: coarse) {
+  .rope-click-area {
+    stroke-width: 30;
+  }
+}

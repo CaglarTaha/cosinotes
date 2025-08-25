@@ -1,0 +1,711 @@
+.sticky-note {
+  position: absolute;
+  width: 280px;
+  min-height: 200px;
+  background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  cursor: default;
+  transition: all 0.2s ease;
+  z-index: 1;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  transform-origin: center;
+  user-select: none;
+  will-change: transform;
+  touch-action: none;
+  direction: ltr;
+  unicode-bidi: plaintext;
+  text-align: left;
+}
+
+.sticky-note:hover {
+  transform: scale(1.02) rotate(0.5deg);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+/* Drag handle area */
+.sticky-note::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  cursor: grab;
+  z-index: 1;
+}
+
+.sticky-note:hover::before {
+  cursor: grab;
+}
+
+.sticky-note.dragging::before {
+  cursor: grabbing;
+}
+
+.sticky-note.dragging {
+  cursor: grabbing;
+  transform: scale(1.05) rotate(1deg);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.2),
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  user-select: none;
+  transition: none;
+  pointer-events: none;
+}
+
+.sticky-note.dragging * {
+  pointer-events: none;
+}
+
+.sticky-note.dragging .note-actions * {
+  pointer-events: none;
+}
+
+.sticky-note.pinned {
+  background: linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%);
+  border: 2px solid #ff9800;
+}
+
+.sticky-note.pinned::before {
+  content: '📌';
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  font-size: 16px;
+  z-index: 2;
+}
+
+/* Connection mode styles */
+.sticky-note.connection-mode {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sticky-note.connection-mode:hover {
+  transform: scale(1.05) rotate(0deg);
+  box-shadow: 
+    0 12px 24px rgba(0, 123, 255, 0.2),
+    0 6px 12px rgba(0, 123, 255, 0.15),
+    0 0 0 2px rgba(0, 123, 255, 0.3);
+}
+
+.sticky-note.selected {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 3px solid #007bff;
+  box-shadow: 
+    0 8px 16px rgba(0, 123, 255, 0.3),
+    0 4px 8px rgba(0, 123, 255, 0.2),
+    0 0 0 3px rgba(0, 123, 255, 0.5);
+  transform: scale(1.03);
+  animation: selectedPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% {
+    box-shadow: 
+      0 8px 16px rgba(0, 123, 255, 0.3),
+      0 4px 8px rgba(0, 123, 255, 0.2),
+      0 0 0 3px rgba(0, 123, 255, 0.5);
+  }
+  50% {
+    box-shadow: 
+      0 12px 24px rgba(0, 123, 255, 0.4),
+      0 6px 12px rgba(0, 123, 255, 0.3),
+      0 0 0 3px rgba(0, 123, 255, 0.7);
+  }
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  min-height: 32px;
+  position: relative;
+  z-index: 10;
+}
+
+.note-title-container {
+  flex: 1;
+  margin-right: 8px;
+  min-width: 0; /* Allow flex item to shrink below content size */
+}
+
+.note-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.2;
+  word-wrap: break-word;
+  font-family: inherit;
+  cursor: text;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  padding: 2px 4px;
+  min-height: 24px;
+  direction: ltr;
+  unicode-bidi: plaintext;
+  text-align: left;
+  position: relative;
+  z-index: 10;
+  /* Text overflow handling */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.note-title:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.note-title.editing {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid #007bff;
+  outline: none;
+  padding: 4px 8px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  user-select: text;
+  /* Allow text to wrap when editing */
+  white-space: pre-wrap;
+  overflow: visible;
+  max-height: none;
+  min-height: 24px;
+  display: block;
+}
+
+.note-title:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #007bff;
+  padding: 4px 8px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.note-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: auto;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.sticky-note:hover .note-actions {
+  opacity: 1;
+}
+
+.sticky-note.dragging .note-actions {
+  opacity: 0;
+}
+
+.sticky-note.selected .note-actions {
+  opacity: 1;
+}
+
+.pin-btn, .delete-btn, .connect-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.pin-btn {
+  color: #ff9800;
+}
+
+.pin-btn.pinned {
+  color: #f57c00;
+  transform: scale(1.1);
+}
+
+.pin-btn:hover {
+  background-color: rgba(255, 152, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  color: #f44336;
+}
+
+.delete-btn:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+  transform: scale(1.1);
+}
+
+.connect-btn {
+  color: #007bff;
+  font-size: 12px;
+}
+
+.connect-btn.selected {
+  color: #0056b3;
+  background-color: rgba(0, 123, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.connect-btn:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.note-content-container {
+  flex: 1;
+  margin-bottom: 12px;
+  min-height: 80px;
+  min-width: 0; /* Allow flex item to shrink below content size */
+}
+
+.note-content {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #555;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  font-family: inherit;
+  cursor: text;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  padding: 4px;
+  min-height: 80px;
+  direction: ltr;
+  unicode-bidi: plaintext;
+  text-align: left;
+  position: relative;
+  z-index: 10;
+  /* Text overflow handling */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  max-height: 80px;
+}
+
+.note-content:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.note-content.editing {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid #007bff;
+  outline: none;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  user-select: text;
+  /* Allow full text when editing */
+  overflow: visible;
+  display: block;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+  max-height: none;
+  min-height: 80px;
+}
+
+.note-content:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #007bff;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #888;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 8px;
+}
+
+.note-date {
+  font-family: inherit;
+}
+
+.note-shadow {
+  position: absolute;
+  bottom: -8px;
+  left: 4px;
+  right: 4px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  filter: blur(4px);
+  z-index: -1;
+}
+
+/* Animation for new notes */
+@keyframes noteAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-5deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.sticky-note {
+  animation: noteAppear 0.3s ease-out;
+}
+
+/* Different note colors based on groups */
+.sticky-note[data-group="work"] {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+.sticky-note[data-group="personal"] {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+}
+
+.sticky-note[data-group="ideas"] {
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+}
+
+.sticky-note[data-group="tasks"] {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%);
+}
+
+/* Performance optimizations */
+.sticky-note * {
+  pointer-events: auto;
+}
+
+.sticky-note.dragging * {
+  pointer-events: none;
+}
+
+.sticky-note.dragging .note-actions * {
+  pointer-events: none;
+}
+
+/* Content editing improvements */
+.note-title[contenteditable="true"],
+.note-content[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  caret-color: #333;
+  outline: none;
+  border: 2px solid #007bff;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-height: 24px;
+  position: relative;
+  z-index: 1000;
+}
+
+.note-title[contenteditable="true"] {
+  padding: 2px 4px;
+  min-height: 24px;
+  white-space: pre-wrap;
+  overflow: visible;
+  max-height: none;
+  display: block;
+}
+
+.note-content[contenteditable="true"] {
+  padding: 8px;
+  min-height: 80px;
+  white-space: pre-wrap;
+  overflow: visible;
+  max-height: none;
+  display: block;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+}
+
+.note-title[contenteditable="true"]:focus,
+.note-content[contenteditable="true"]:focus {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  outline: none;
+  border: 2px solid #007bff;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Placeholder styling using data-placeholder attribute */
+.note-title[data-placeholder]:empty::before,
+.note-content[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: #999;
+  font-style: italic;
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: inherit;
+  display: flex;
+  align-items: flex-start;
+  direction: ltr;
+  unicode-bidi: plaintext;
+  text-align: left;
+  z-index: -1;
+}
+
+.note-title[data-placeholder]:empty::before {
+  align-items: center;
+}
+
+/* Ensure placeholder doesn't interfere with editing */
+.note-title[contenteditable="true"][data-placeholder]:empty::before,
+.note-content[contenteditable="true"][data-placeholder]:empty::before {
+  display: none;
+}
+
+/* Handle contentEditable empty state */
+.note-title[contenteditable="true"]:empty::after,
+.note-content[contenteditable="true"]:empty::after {
+  content: attr(data-placeholder);
+  color: #999;
+  font-style: italic;
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: inherit;
+  display: flex;
+  align-items: flex-start;
+  direction: ltr;
+  unicode-bidi: plaintext;
+  text-align: left;
+  z-index: -1;
+}
+
+.note-title[contenteditable="true"]:empty::after {
+  align-items: center;
+}
+
+/* Prevent placeholder from interfering with real content */
+.note-title[contenteditable="true"]:not(:empty)::after,
+.note-content[contenteditable="true"]:not(:empty)::after {
+  display: none;
+}
+
+/* Remove old placeholder styles */
+.placeholder {
+  display: none;
+}
+
+/* Additional text direction fixes */
+.note-title *,
+.note-content * {
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+}
+
+/* Ensure proper cursor behavior */
+.note-title[contenteditable="true"]:focus,
+.note-content[contenteditable="true"]:focus {
+  caret-color: #333;
+}
+
+/* Prevent any RTL behavior */
+.note-title,
+.note-content {
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+}
+
+/* Force LTR for all text content */
+.note-title *,
+.note-content *,
+.note-title::before,
+.note-content::before,
+.note-title::after,
+.note-content::after {
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+}
+
+/* Additional text direction enforcement */
+.note-title[contenteditable="true"] *,
+.note-content[contenteditable="true"] * {
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  text-transform: none !important;
+  font-variant: normal !important;
+  font-feature-settings: normal !important;
+}
+
+/* Ensure proper text flow */
+.note-title[contenteditable="true"],
+.note-content[contenteditable="true"] {
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  text-combine-upright: none !important;
+  text-transform: none !important;
+  font-variant: normal !important;
+  font-feature-settings: normal !important;
+}
+
+/* Prevent any text manipulation */
+.note-title[contenteditable="true"] *,
+.note-content[contenteditable="true"] * {
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  text-align: left !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+}
+
+/* Text overflow improvements */
+.note-title:not(.editing),
+.note-content:not(.editing) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-title:not(.editing) {
+  white-space: nowrap;
+}
+
+.note-content:not(.editing) {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  white-space: pre-wrap;
+}
+
+/* Smooth transitions for editing states */
+.note-title,
+.note-content {
+  transition: all 0.2s ease;
+}
+
+/* Ensure proper text rendering */
+.note-title,
+.note-content {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent text selection during drag */
+.sticky-note.dragging .note-title,
+.sticky-note.dragging .note-content {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Ensure editing elements don't interfere with drag */
+.note-title[contenteditable="true"],
+.note-content[contenteditable="true"] {
+  pointer-events: auto;
+}
+
+.sticky-note.dragging .note-title[contenteditable="true"],
+.sticky-note.dragging .note-content[contenteditable="true"] {
+  pointer-events: none;
+}
+
+/* Improve focus visibility */
+.note-title[contenteditable="true"]:focus,
+.note-content[contenteditable="true"]:focus {
+  outline: none;
+  border: 2px solid #007bff;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Ensure proper text input behavior */
+.note-title[contenteditable="true"],
+.note-content[contenteditable="true"] {
+  -webkit-user-modify: read-write-plaintext-only;
+  -moz-user-modify: read-write-plaintext-only;
+  -ms-user-modify: read-write-plaintext-only;
+  user-modify: read-write-plaintext-only;
+}
+
+/* Prevent unwanted text formatting */
+.note-title[contenteditable="true"] *,
+.note-content[contenteditable="true"] * {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  color: inherit !important;
+  background: none !important;
+  text-decoration: none !important;
+}
+
+/* Ensure proper line breaks */
+.note-title[contenteditable="true"],
+.note-content[contenteditable="true"] {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Prevent unwanted text transformations */
+.note-title[contenteditable="true"],
+.note-content[contenteditable="true"] {
+  text-transform: none !important;
+  font-variant: normal !important;
+  font-feature-settings: normal !important;
+  text-combine-upright: none !important;
+  text-orientation: mixed !important;
+}

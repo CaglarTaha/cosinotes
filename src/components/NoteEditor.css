@@ -1,0 +1,79 @@
+.note-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.editor-header {
+  padding: 20px 30px;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #fafafa;
+}
+
+.title-input {
+  width: 100%;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  border: none;
+  background: none;
+  outline: none;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.title-input::placeholder {
+  color: #999;
+}
+
+.note-info {
+  font-size: 12px;
+  color: #666;
+}
+
+.editor-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background: none;
+  font-family: inherit;
+}
+
+.content-textarea::placeholder {
+  color: #999;
+}
+
+.empty-editor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: #666;
+}
+
+.empty-editor h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.empty-editor p {
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 400px;
+}
